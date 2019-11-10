@@ -1,4 +1,5 @@
-# Enspire #### Inspire. Engage
+# Enspire 
+### Inspire. Engage.
 
 ## The Problem
 The issue that is being looked at is how can life be improved. This can be done in many ways from improving the environment, to helping the economy, or helping one's mental/physical wellness. 
