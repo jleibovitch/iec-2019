@@ -37,8 +37,8 @@ def create_business():
         payload = request.get_json()
 
         cursor = connection.cursor()
-        cursor.execute('insert into business(name, location, username, password, rating, email) values(%s, %s, %s, %s, %s, %s, %s)',
-            (payload["name"], payload["location"], payload["username"], payload["password"], payload["rating"], payload["email"]))
+        cursor.execute('insert into business(name, location, username, password, email) values(%s, %s, %s, %s, %s, %s, %s)',
+            (payload["name"], payload["location"], payload["username"], payload["password"], "0", payload["email"]))
 
         connection.commit()
 
@@ -109,21 +109,30 @@ def get_user_jobs(userid):
     select b.name business_name, b.location, t.status task_status, j.description job_description, j.reward, j.title
     from task t
     join business b
-      on b.id = t.business_id
+    on b.id = t.business_id
     join job j
-      on j.id = t.job_id
+    on j.id = t.job_id
     where user_id=%s
-    """
+        """
 
     cursor = connection.cursor()
     cursor.execute(sql, (userid))
 
     jsonResponse = {
             "status": "200",
-            "response": [r[0] for r in cursor.fetchall()]
+            "response": [{
+                "business_name": r[0],
+                "location": r[1],
+                "task_status": r[2],
+                "job_description": r[3],
+                "reward": r[4],
+                "title": r[5]
+            } for r in cursor.fetchall()]
     }
 
     cursor.close()
+
+    return jsonify(jsonResponse)
 
 @app.route('/api/tasks/create', methods=["POST"])
 def add_task():
@@ -145,7 +154,30 @@ def add_task():
 
 
 
-@app.route('/api/jobs/job', methods=["POST"])
+@app.route('/api/jobs', methods=["GET"])
+def get_jobs():
+    cursor = connection.cursor()
+    cursor.execute("select * from job")
+
+    # print(cursor.fetchall())
+    jsonResponse = {
+            "status": "200",
+            "response": [
+                {
+                    "id": r[0],
+                    "business_id": r[1],
+                    "reward": r[3],
+                    "description": r[4],
+                    "location": r[5],
+                    "title": r[6]
+                } for r in cursor.fetchall()]
+    }
+    cursor.close()
+
+    return jsonify(jsonResponse)
+
+
+@app.route('/api/jobs/create', methods=["POST"])
 def create_job():
 
     try:
