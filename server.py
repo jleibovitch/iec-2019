@@ -18,7 +18,10 @@ def get_business():
     res = cursor.fetchone()
 
     status = 200 if res is not None else 404
-    responseData = res if res is not None else {}
+    responseData = {
+        "id": res[0],
+        "name": res[1],
+    } if res is not None else {}
 
     jsonResponse = {
         "status": status,
@@ -67,7 +70,10 @@ def get_user():
     res = cursor.fetchone()
 
     status = 200 if res is not None else 404
-    responseData = res if res is not None else {}
+    responseData = {
+        "id": res[0],
+        "name": res[1],
+    } if res is not None else {}
 
     jsonResponse = {
         "status": status,
@@ -159,7 +165,6 @@ def get_jobs():
     cursor = connection.cursor()
     cursor.execute("select * from job")
 
-    # print(cursor.fetchall())
     jsonResponse = {
             "status": "200",
             "response": [
